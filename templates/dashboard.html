@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📊 Model Dashboard</h1>
+    <p>Performance metrics for the Logistic Regression model</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🎯</div>
+        <div class="stat-value">{{ (stats.accuracy * 100)|round(1) }}%</div>
+        <div class="stat-label">Accuracy</div></div>
+    <div class="stat-card"><div class="stat-icon">📈</div>
+        <div class="stat-value">{{ stats.auc }}</div>
+        <div class="stat-label">ROC-AUC Score</div></div>
+    <div class="stat-card"><div class="stat-icon">⚖️</div>
+        <div class="stat-value">{{ stats.f1 }}</div>
+        <div class="stat-label">F1 Score (Churn)</div></div>
+    <div class="stat-card"><div class="stat-icon">👥</div>
+        <div class="stat-value">{{ stats.total_customers }}</div>
+        <div class="stat-label">Total Customers</div></div>
+    <div class="stat-card"><div class="stat-icon">📉</div>
+        <div class="stat-value">{{ stats.churn_rate }}%</div>
+        <div class="stat-label">Churn Rate</div></div>
+</div>
+
+<div class="charts-row" style="margin-top:1.5rem;">
+    <div class="chart-card">
+        <h3>Confusion Matrix</h3>
+        <div id="cm-chart" style="height:350px;"></div>
+    </div>
+    <div class="chart-card">
+        <h3>ROC Curve</h3>
+        <div id="roc-chart" style="height:350px;"></div>
+    </div>
+</div>
+
+<script>
+const stats = {{ stats | tojson }};
+
+Plotly.newPlot('cm-chart', [{
+    type: 'heatmap',
+    z: stats.cm,
+    x: ['Predicted: Stayed', 'Predicted: Churned'],
+    y: ['Actual: Stayed', 'Actual: Churned'],
+    colorscale: 'Blues',
+    text: stats.cm.map(row => row.map(v => v.toString())),
+    texttemplate: '%{text}',
+    textfont: { size: 22, color: 'white' },
+    showscale: false
+}], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { t:20, b:60, l:140, r:20 },
+    font: { color: 'var(--text)' }
+});
+
+Plotly.newPlot('roc-chart', [
+    {
+        x: stats.fpr, y: stats.tpr,
+        type: 'scatter', mode: 'lines',
+        name: `Logistic Regression (AUC = ${stats.auc})`,
+        line: { color: '#3498db', width: 3 }
+    },
+    {
+        x: [0,1], y: [0,1],
+        type: 'scatter', mode: 'lines',
+        name: 'Random Guess',
+        line: { color: '#95a5a6', dash: 'dash' }
+    }
+], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    xaxis: { title: 'False Positive Rate', gridcolor: '#ecf0f1' },
+    yaxis: { title: 'True Positive Rate', gridcolor: '#ecf0f1' },
+    margin: { t:20, b:60, l:60, r:20 },
+    font: { color: 'var(--text)' },
+    legend: { x:0.4, y:0.1 }
+});
+</script>
+
+{% endblock %}

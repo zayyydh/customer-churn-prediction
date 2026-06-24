@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📜 Prediction History</h1>
+    <p>All predictions saved to the database — most recent first</p>
+</div>
+
+<div class="history-controls">
+    <span class="history-count">{{ predictions|length }} predictions loaded</span>
+    <button onclick="clearHistory()" class="btn btn-danger">🗑️ Clear History</button>
+</div>
+
+{% if predictions %}
+<div class="table-card">
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Time</th>
+                <th>Tenure</th>
+                <th>Monthly $</th>
+                <th>Contract</th>
+                <th>Internet</th>
+                <th>Payment</th>
+                <th>Probability</th>
+                <th>Risk</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in predictions %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.timestamp.strftime('%b %d, %H:%M') }}</td>
+                <td>{{ p.tenure }} mo</td>
+                <td>${{ p.monthly_charges }}</td>
+                <td>{{ p.contract }}</td>
+                <td>{{ p.internet }}</td>
+                <td>{{ p.payment }}</td>
+                <td><strong>{{ p.probability }}%</strong></td>
+                <td>
+                    <span class="risk-badge
+                        {% if p.risk_level == 'High Risk' %}risk-high
+                        {% elif p.risk_level == 'Medium Risk' %}risk-medium
+                        {% else %}risk-low{% endif %}">
+                        {{ p.risk_level }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Risk Distribution Chart -->
+<div class="chart-card" style="margin-top:1.5rem;">
+    <h3>Risk Distribution of All Predictions</h3>
+    <div id="risk-chart" style="height:300px;"></div>
+</div>
+
+<script>
+const predictions = {{ predictions | map(attribute='risk_level') | list | tojson }};
+const counts = { 'High Risk': 0, 'Medium Risk': 0, 'Low Risk': 0 };
+predictions.forEach(r => counts[r]++);
+
+Plotly.newPlot('risk-chart', [{
+    type: 'pie',
+    labels: Object.keys(counts),
+    values: Object.values(counts),
+    marker: { colors: ['#e74c3c', '#f39c12', '#2ecc71'] },
+    hole: 0.4,
+    textinfo: 'label+percent'
+}], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    margin: { t: 20, b: 20, l: 20, r: 20 },
+    showlegend: true,
+    font: { color: '#2c3e50' }
+});
+</script>
+
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">🔮</div>
+    <h3>No predictions yet!</h3>
+    <p>Go make your first prediction and it will appear here.</p>
+    <a href="/predict" class="btn btn-primary">🎯 Make a Prediction</a>
+</div>
+{% endif %}
+
+<script>
+async function clearHistory() {
+    if (!confirm('Clear all prediction history? This cannot be undone.')) return;
+    await fetch('/api/clear_history', { method: 'POST' });
+    location.reload();
+}
+</script>
+
+{% endblock %}

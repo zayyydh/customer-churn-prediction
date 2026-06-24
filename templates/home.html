@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🤖 Machine Learning Powered</div>
+        <h1 class="hero-title">Predict Customer Churn <span class="gradient-text">Before It Happens</span></h1>
+        <p class="hero-subtitle">
+            A full-stack ML web app trained on 7,043 real telecom customers.
+            Identify at-risk customers instantly and take action before they leave.
+        </p>
+        <div class="hero-btns">
+            <a href="/predict" class="btn btn-primary">🎯 Try Predictor</a>
+            <a href="/dashboard" class="btn btn-outline">📊 View Dashboard</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-card">
+            <div class="hero-card-icon">🚨</div>
+            <div class="hero-card-text">High Risk Customer</div>
+            <div class="hero-card-prob">87% churn probability</div>
+            <div class="hero-bar"><div class="hero-bar-fill high" style="width:87%"></div></div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-icon">⚠️</div>
+            <div class="hero-card-text">Medium Risk Customer</div>
+            <div class="hero-card-prob">52% churn probability</div>
+            <div class="hero-bar"><div class="hero-bar-fill medium" style="width:52%"></div></div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-icon">✅</div>
+            <div class="hero-card-text">Low Risk Customer</div>
+            <div class="hero-card-prob">12% churn probability</div>
+            <div class="hero-bar"><div class="hero-bar-fill low" style="width:12%"></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Stats -->
+<section class="live-stats">
+    <h2 class="section-title">📈 Live App Stats</h2>
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">🎯</div>
+            <div class="stat-value">{{ (stats.accuracy * 100)|round(1) }}%</div>
+            <div class="stat-label">Model Accuracy</div></div>
+        <div class="stat-card"><div class="stat-icon">📈</div>
+            <div class="stat-value">{{ stats.auc }}</div>
+            <div class="stat-label">ROC-AUC Score</div></div>
+        <div class="stat-card"><div class="stat-icon">👥</div>
+            <div class="stat-value">{{ stats.total_customers }}</div>
+            <div class="stat-label">Training Customers</div></div>
+        <div class="stat-card"><div class="stat-icon">🔮</div>
+            <div class="stat-value">{{ total_predictions }}</div>
+            <div class="stat-label">Predictions Made</div></div>
+        <div class="stat-card"><div class="stat-icon">🚨</div>
+            <div class="stat-value">{{ high_risk }}</div>
+            <div class="stat-label">High Risk Found</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div>
+            <div class="stat-value">{{ low_risk }}</div>
+            <div class="stat-label">Low Risk Found</div></div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <h2 class="section-title">⚙️ How It Works</h2>
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-icon">📋</div>
+            <h3>Input Customer Data</h3>
+            <p>Fill in customer details — contract type, services, tenure, charges and more.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-icon">🧠</div>
+            <h3>ML Model Predicts</h3>
+            <p>Our Logistic Regression model analyzes 30 features to compute churn probability.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-icon">📊</div>
+            <h3>Get Risk Score</h3>
+            <p>See the churn probability on an interactive gauge — Low, Medium or High risk.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-icon">💾</div>
+            <h3>Saved to History</h3>
+            <p>Every prediction is stored in the database so you can track patterns over time.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Cards -->
+<section class="features-section">
+    <h2 class="section-title">🚀 Explore the App</h2>
+    <div class="feature-cards">
+        <a href="/predict" class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Predict Churn</h3>
+            <p>Input any customer's details and instantly get their churn probability with a visual gauge chart.</p>
+            <span class="feature-link">Try it →</span>
+        </a>
+        <a href="/dashboard" class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Model Dashboard</h3>
+            <p>Explore the model's performance — accuracy, ROC curve, confusion matrix and key metrics.</p>
+            <span class="feature-link">View →</span>
+        </a>
+        <a href="/features" class="feature-card">
+            <div class="feature-icon">🔑</div>
+            <h3>Feature Importance</h3>
+            <p>Discover which customer attributes drive churn the most through interactive charts.</p>
+            <span class="feature-link">Explore →</span>
+        </a>
+        <a href="/history" class="feature-card">
+            <div class="feature-icon">📜</div>
+            <h3>Prediction History</h3>
+            <p>View all past predictions stored in the database with risk levels and customer details.</p>
+            <span class="feature-link">Browse →</span>
+        </a>
+    </div>
+</section>
+
+<!-- Key Insights -->
+<section class="insights-section">
+    <h2 class="section-title">🔑 Key Insights from the Data</h2>
+    <div class="insights-grid">
+        <div class="insight-card danger">
+            <h4>🚨 Highest Churn Risk</h4>
+            <ul>
+                <li>📡 Fiber optic internet users</li>
+                <li>📅 Month-to-month contracts</li>
+                <li>💳 Electronic check payers</li>
+                <li>🆕 New customers (low tenure)</li>
+            </ul>
+        </div>
+        <div class="insight-card success">
+            <h4>🛡️ Strongest Retention Signals</h4>
+            <ul>
+                <li>⏳ Long tenure customers</li>
+                <li>📋 Two-year contracts</li>
+                <li>🔒 Online security subscribers</li>
+                <li>🛠️ Tech support subscribers</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

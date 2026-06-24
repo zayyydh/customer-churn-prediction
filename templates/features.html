@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🔑 Feature Importance</h1>
+    <p>Which customer attributes drive churn the most?</p>
+</div>
+
+<div class="chart-card full-width">
+    <h3>Top 15 Features — Logistic Regression Coefficients</h3>
+    <p style="color:var(--text2); margin-bottom:1rem;">
+        🔴 Red = increases churn &nbsp;|&nbsp; 🔵 Blue = decreases churn
+    </p>
+    <div id="feat-chart" style="height:500px;"></div>
+</div>
+
+<div class="insights-grid" style="margin-top:1.5rem;">
+    <div class="insight-card danger">
+        <h4>🚨 Top Churn Drivers</h4>
+        <ul>
+            <li>Fiber optic internet service</li>
+            <li>Month-to-month contract</li>
+            <li>Electronic check payment</li>
+            <li>Streaming TV & Movies</li>
+            <li>Paperless billing</li>
+        </ul>
+    </div>
+    <div class="insight-card success">
+        <h4>🛡️ Top Retention Factors</h4>
+        <ul>
+            <li>Long tenure (loyal customers)</li>
+            <li>Two-year contract</li>
+            <li>One-year contract</li>
+            <li>Online security service</li>
+            <li>Tech support service</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+const featImp = {{ feat_imp | tojson }};
+const colors = featImp.coefficients.map(v => v > 0 ? '#e74c3c' : '#3498db');
+
+Plotly.newPlot('feat-chart', [{
+    type: 'bar',
+    orientation: 'h',
+    x: featImp.coefficients,
+    y: featImp.features,
+    marker: { color: colors },
+    text: featImp.coefficients.map(v => v.toFixed(3)),
+    textposition: 'outside'
+}], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    xaxis: { title: 'Coefficient Value', gridcolor: '#ecf0f1', zeroline: true, zerolinecolor: '#2c3e50' },
+    yaxis: { autorange: 'reversed' },
+    margin: { t:20, b:60, l:220, r:80 },
+    font: { color: 'var(--text)', size: 13 }
+});
+</script>
+
+{% endblock %}
